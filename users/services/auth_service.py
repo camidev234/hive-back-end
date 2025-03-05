@@ -42,7 +42,8 @@ class AuthService():
             
             
             return response_object
-            raise ValidationError(serializer.errors)
+        
+        raise ValidationError(serializer.errors)
         
 
 

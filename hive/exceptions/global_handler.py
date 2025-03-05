@@ -12,6 +12,10 @@ def custom_exception_handler(exc, context):
         error_response = ApiErrorResponse(400, errors=exc.detail, message="A validation error ocurred, please check the fields")
         return Response(error_response.get_response(), status=status.HTTP_400_BAD_REQUEST)
     
+    if isinstance(exc, AuthenticationFailed):
+        error_response = ApiErrorResponse(401, message=str(exc.detail))
+        return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+    
     # if response is None:
     #     error_response = ApiErrorResponse(500, message="An unexpected error occurred")
     #     return Response(error_response.get_response(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
