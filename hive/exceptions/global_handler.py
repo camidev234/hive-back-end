@@ -16,5 +16,9 @@ def custom_exception_handler(exc, context):
     #     error_response = ApiErrorResponse(500, message="An unexpected error occurred")
     #     return Response(error_response.get_response(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    if isinstance(exc, User.DoesNotExist):
+        error_response = ApiErrorResponse(404, message="The user does not exists")
+        return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+    
     return response
 
