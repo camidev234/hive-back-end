@@ -9,3 +9,8 @@ class SaveUserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ["name", "last_name", "username", "email", "born_date", "password", "gender"]
+        
+class UserGetSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["name", "last_name", "username", "email", "born_date", "gender", "created_at", "updated_at"]

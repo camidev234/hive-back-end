@@ -7,9 +7,9 @@ class UserService():
         serializer = SaveUserSerializer(data=user_data)
         if serializer.is_valid():
             if 'password' in user_data:
-                user_data["password"] = make_password(user_data["password"])
+                serializer.validated_data["password"] = make_password(user_data["password"])
             user_saved = serializer.save()
             user_serialized = SaveUserSerializer(user_saved)
-            return serializer.data
+            return user_serialized.data
         
         raise ValidationError(serializer.errors)
