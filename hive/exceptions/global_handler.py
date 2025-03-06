@@ -13,16 +13,27 @@ def custom_exception_handler(exc, context):
         return Response(error_response.get_response(), status=status.HTTP_400_BAD_REQUEST)
     
     if isinstance(exc, AuthenticationFailed):
-        error_response = ApiErrorResponse(401, message=str(exc.detail))
-        return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
-    
-    # if response is None:
-    #     error_response = ApiErrorResponse(500, message="An unexpected error occurred")
-    #     return Response(error_response.get_response(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # print("detallllesss::::")
+        # print(exc.detail)
+        
+        if exc.detail == "User not found" or exc.detail == "Incorrect password":
+            error_response = ApiErrorResponse(401, message=str(exc.detail))
+            return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+        
+        if exc.detail["messages"][0]["message"].code == "token_not_valid":
+            # print("codigoo de estado" + exc.detail["messages"][0]["message"].code)
+            message = str(exc.detail["messages"][0]["message"])
+            error_response = ApiErrorResponse(401, message=message)
+            return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+        
 
     if isinstance(exc, User.DoesNotExist):
         error_response = ApiErrorResponse(404, message="The user does not exists")
         return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+
+    if response is None:
+        error_response = ApiErrorResponse(500, message="An unexpected error occurred")
+        return Response(error_response.get_response(), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return response
 
