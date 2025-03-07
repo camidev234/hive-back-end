@@ -23,7 +23,7 @@ class PostService():
         raise exceptions.ValidationError(serializer.errors)
     
     def get_posts(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.all().order_by("-created_at")
         paginator = Paginator()
         paginated_posts = paginator.paginate_query_set(posts, request)
         
