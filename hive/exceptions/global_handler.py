@@ -1,8 +1,9 @@
 from rest_framework.views import exception_handler
 from hive.utils.api_response import ApiErrorResponse
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, NotFound, AuthenticationFailed, PermissionDenied
+from rest_framework.exceptions import ValidationError, NotFound, AuthenticationFailed
 from rest_framework import status
+from django.db import IntegrityError
 from users.models.user import User
 
 def custom_exception_handler(exc, context):
@@ -11,6 +12,10 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, ValidationError):
         error_response = ApiErrorResponse(400, errors=exc.detail, message="A validation error ocurred, please check the fields")
         return Response(error_response.get_response(), status=status.HTTP_400_BAD_REQUEST)
+    
+    if isinstance(exc, IntegrityError):
+        error_response = ApiErrorResponse(409, message="An error ocurred")
+        return Response(error_response.get_response(), status=status.HTTP_409_CONFLICT)
     
     if isinstance(exc, AuthenticationFailed):
         # print("detallllesss::::")
@@ -37,6 +42,10 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, User.DoesNotExist):
         error_response = ApiErrorResponse(404, message="The user does not exists")
         return Response(error_response.get_response(), status=status.HTTP_401_UNAUTHORIZED)
+    
+    if isinstance(exc, NotFound):
+        error_response = ApiErrorResponse(404, message=exc.detail)
+        return Response(error_response.get_response(), status=status.HTTP_404_NOT_FOUND)
 
     # if response is None:
     #     error_response = ApiErrorResponse(500, message="An unexpected error occurred")

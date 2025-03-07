@@ -32,3 +32,10 @@ class PostService():
         paginator_object = paginator.get_paginator_object()
         
         return paginator_object.get_paginated_response(serialized_posts.data)
+    
+    def get_post(self, post_id):
+        try:
+            post_found = Post.objects.get(id=post_id)
+            return post_found
+        except Post.DoesNotExist:
+            raise exceptions.NotFound(f"The post {post_id} does not found")
