@@ -92,12 +92,15 @@ DATABASES = {
         'USER': 'root',                
         'PASSWORD': '',         
         'HOST': 'localhost',                
-        'PORT': '3306',                      
+        'PORT': '3306',    
+        'OPTIONS': {
+            'charset': 'utf8mb4', 
+        },                  
     }
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',

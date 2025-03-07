@@ -16,3 +16,7 @@ class PostView(APIView):
         post_saved = self.post_service.save_post(request.user, request.data)
         api_response = ApiSuccessResponse(201, post_saved, "Post Created Succesffully")
         return Response(api_response.get_response(), status=status.HTTP_201_CREATED)
+    
+    def get(self, request):
+        posts = self.post_service.get_posts(request)
+        return posts

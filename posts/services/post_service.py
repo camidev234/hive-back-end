@@ -1,6 +1,8 @@
 from posts.serializers import post_serializers
 from rest_framework import exceptions
 from posts.models.post import Post
+from hive.utils.paginator import Paginator
+from posts.serializers.post_serializers import PostGetSerializer
 
 class PostService():
     def save_post(self, user_auth, post_data):
@@ -19,3 +21,14 @@ class PostService():
             return post_saved.data
         
         raise exceptions.ValidationError(serializer.errors)
+    
+    def get_posts(self, request):
+        posts = Post.objects.all()
+        paginator = Paginator()
+        paginated_posts = paginator.paginate_query_set(posts, request)
+        
+        serialized_posts = PostGetSerializer(paginated_posts, many=True)
+        
+        paginator_object = paginator.get_paginator_object()
+        
+        return paginator_object.get_paginated_response(serialized_posts.data)
