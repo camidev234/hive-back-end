@@ -1,5 +1,5 @@
 from posts.services.post_service import PostService
-from posts.serializers.post_reaction_serializers import PostReactionSaveSerializer
+from posts.serializers.post_reaction_serializers import PostReactionSaveSerializer, ReactionDeleteSerializer
 from rest_framework import exceptions
 from posts.models.post_reaction import PostReaction
 from users.services.user_service import UserService
@@ -34,3 +34,17 @@ class PostReactionService():
     def get_post_reactions(self, post_id):
         post = self.post_service.get_post(post_id)
         pass
+    
+    def get_post_reaction(self, reaction_id):
+        try:
+            post_reaction_found = PostReaction.objects.get(id=reaction_id)
+            return post_reaction_found
+        except PostReaction.DoesNotExist:
+            raise exceptions.NotFound("The reaction does not exists")
+    
+    def delete_reaction(self, pk):
+        
+        post_reaction = self.get_post_reaction(pk)
+        post_reaction.delete()
+        return True
+        

@@ -16,5 +16,13 @@ class PostReactionView(APIView):
         post_reaction = self.post_reaction_service.save_reaction(request.data, request.user)
         api_response = ApiSuccessResponse(201, post_reaction, "Reaction created successfully")
         return Response(api_response.get_response(), status=status.HTTP_201_CREATED)
-        
-     
+    
+    def delete(self, request, pk):
+        result = self.post_reaction_service.delete_reaction(pk)
+        if result:
+            api_response = ApiSuccessResponse(
+                200,
+                {"post_reaction_deleted": pk},
+                "Reaction deleted successfully"
+            )
+            return Response(api_response.get_response(), status=status.HTTP_200_OK)
