@@ -1,8 +1,9 @@
 from posts.services.post_service import PostService
-from posts.serializers.post_reaction_serializers import PostReactionSaveSerializer, ReactionDeleteSerializer
+from posts.serializers.post_reaction_serializers import PostReactionSaveSerializer, ReactionDeleteSerializer, ReactionGetListSerializer
 from rest_framework import exceptions
 from posts.models.post_reaction import PostReaction
 from users.services.user_service import UserService
+from hive.utils.paginator import Paginator
 
 class PostReactionService():
     
@@ -47,4 +48,19 @@ class PostReactionService():
         post_reaction = self.get_post_reaction(pk)
         post_reaction.delete()
         return True
+    
+    
+    def get_post_reactions(self, post_id, request):
+        post = self.post_service.get_post(post_id)
+        reactions = PostReaction.objects.filter(post_id=post_id).order_by("-created_at")
+        
+        paginator = Paginator()
+        paginated_reactions = paginator.paginate_query_set(reactions, request)
+        serialized_reactions = ReactionGetListSerializer(paginated_reactions, many=True)
+        
+        paginator_object = paginator.get_paginator_object()
+        
+        return paginator_object.get_paginated_response(serialized_reactions.data)
+        
+        
         

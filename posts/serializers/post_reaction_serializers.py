@@ -35,4 +35,13 @@ class ReactionDeleteSerializer(serializers.Serializer):
     
     post_reaction_id = serializers.IntegerField(required=True)    
     
+class ReactionGetListSerializer(serializers.ModelSerializer):
+    
+    user = UserGetSerializer()
+    
+    class Meta:
+        model = PostReaction
+        fields = ["id", "post_id", "reaction_type", "user", "created_at"]
+    
+    
     

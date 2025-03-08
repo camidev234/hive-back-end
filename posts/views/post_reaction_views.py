@@ -26,3 +26,7 @@ class PostReactionView(APIView):
                 "Reaction deleted successfully"
             )
             return Response(api_response.get_response(), status=status.HTTP_200_OK)
+        
+    def get(self, request, pk):
+        post_reactions = self.post_reaction_service.get_post_reactions(pk, request)
+        return post_reactions
