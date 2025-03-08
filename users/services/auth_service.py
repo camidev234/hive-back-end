@@ -25,19 +25,21 @@ class AuthService():
             """
             try:
                 user = User.objects.get(email=email)
+                print(user.profile) 
             except User.DoesNotExist:
                 raise exceptions.AuthenticationFailed('User not found')
             if not check_password(password, user.password):
                 raise exceptions.AuthenticationFailed('Incorrect password')
             if not user.is_active:
                 raise exceptions.AuthenticationFailed('User is inactive')
-            print("paso validacion de password")
+            # print("paso validacion de password")
             refresh = RefreshToken.for_user(user)
             user_detail = UserGetSerializer(user).data
             response_object = {
                 "access_token": str(refresh.access_token),
                 "refresh_token": str(refresh),
-                "user": user_detail               
+                "user": user_detail,
+ 
             }
             
             

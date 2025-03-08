@@ -6,7 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 class Paginator:
     
     def __init__(self):
-        self.page_size = 15
+        self.page_size = 30
         self.paginator_object = PageNumberPagination()
         
     # def validate_query_param(self, request):
