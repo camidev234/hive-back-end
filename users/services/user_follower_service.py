@@ -1,7 +1,8 @@
-from users.serializers.user_follower_serializer import UserFollowerSaveSerializer
+from users.serializers.user_follower_serializer import UserFollowerSaveSerializer, UserFollowerAuthFollowers
 from rest_framework import exceptions
 from users.models.user_follower import UserFollower
 from users.services.user_service import UserService
+from hive.utils.paginator import Paginator
 
 class UserFollowerService():
     def add_user_follower(self, request):
@@ -41,3 +42,18 @@ class UserFollowerService():
         user_follow.delete()
         
         return True
+    
+    def get_user_auth_followers(self, user_auth, request):
+        followers = user_auth.folloed_by.all()
+        
+        paginator = Paginator(20)
+        paginated_followers = paginator.paginate_query_set(followers, request)
+        serialized_followers = UserFollowerAuthFollowers(paginated_followers, many=True)
+        
+        paginator_object = paginator.get_paginator_object()
+        
+        return paginator_object.get_paginated_response(serialized_followers.data)
+        
+        
+        
+        

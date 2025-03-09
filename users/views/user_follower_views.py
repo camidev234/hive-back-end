@@ -18,6 +18,10 @@ class UserFollowerView(APIView):
         if result:
             api_response = ApiSuccessResponse(200, None, "Follow deleted successfully")
             return Response(api_response.get_response(), status=status.HTTP_200_OK)
+        
+    def get(self, request):
+        followers = self.user_follower_service.get_user_auth_followers(request.user, request)
+        return followers
     
 class UserValidateFollowView(APIView):
     def __init__(self, user_follower_service = None):

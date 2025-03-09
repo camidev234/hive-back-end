@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from users.models.user_follower import UserFollower
 from users.models.user import User
+from .user_serializers import UserGetSerializer
 
 class UserFollowerSaveSerializer(serializers.ModelSerializer):
     
@@ -17,3 +18,12 @@ class UserFollowerSaveSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFollower
         fields = ["id", "follower_id" ,"followed_id", "created_at"]
+        
+class UserFollowerAuthFollowers(serializers.ModelSerializer):
+    
+    follower = UserGetSerializer()
+    # followed = UserGetSerializer()
+    
+    class Meta:
+        model = UserFollower
+        fields = ["id", "follower", "created_at"]
