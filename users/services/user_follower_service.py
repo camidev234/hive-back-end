@@ -1,4 +1,4 @@
-from users.serializers.user_follower_serializer import UserFollowerSaveSerializer, UserFollowerAuthFollowers
+from users.serializers.user_follower_serializer import UserFollowerSaveSerializer, UserFollowerAuthFollowers, UserFollowerAuthFollowed
 from rest_framework import exceptions
 from users.models.user_follower import UserFollower
 from users.services.user_service import UserService
@@ -50,9 +50,40 @@ class UserFollowerService():
         paginated_followers = paginator.paginate_query_set(followers, request)
         serialized_followers = UserFollowerAuthFollowers(paginated_followers, many=True)
         
+        serialized_followers_data = serialized_followers.data
+        
+        for follower in serialized_followers_data:
+            result = self.validate_following(follower["follower"]["id"], user_auth)
+            if result is None:
+                follower["is_followed"] = False
+                follower["following_id"] = None
+            else:
+                follower["is_followed"] = True
+                follower["following_id"] = result.id
+        
         paginator_object = paginator.get_paginator_object()
         
-        return paginator_object.get_paginated_response(serialized_followers.data)
+        return paginator_object.get_paginated_response(serialized_followers_data)
+    
+    def get_user_auth_following(self, user_auth, request):
+        following = user_auth.following.all()
+        
+        paginator = Paginator(20)
+        paginated_following = paginator.paginate_query_set(following, request)
+        serialized_following = UserFollowerAuthFollowed(paginated_following, many=True)
+        
+        # serialized_followers_data = serialized_followers.data
+        
+        # for follower in serialized_followers_data:
+        #     result = self.validate_following(follower["follower"]["id"], user_auth)
+        #     if result is None:
+        #         follower["following_id"] = None
+        #     else:
+        #         follower["following_id"] = result.id
+        
+        paginator_object = paginator.get_paginator_object()
+        
+        return paginator_object.get_paginated_response(serialized_following.data)
         
         
         

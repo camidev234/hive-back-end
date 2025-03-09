@@ -23,6 +23,15 @@ class UserFollowerView(APIView):
         followers = self.user_follower_service.get_user_auth_followers(request.user, request)
         return followers
     
+    
+class UserFollowerUserFollowingView(APIView):
+    def __init__(self, user_follower_service = None):
+        self.user_follower_service = user_follower_service or UserFollowerService()
+        
+    def get(self, request):
+        following = self.user_follower_service.get_user_auth_following(request.user, request)
+        return following
+    
 class UserValidateFollowView(APIView):
     def __init__(self, user_follower_service = None):
         self.user_follower_service = user_follower_service or UserFollowerService()

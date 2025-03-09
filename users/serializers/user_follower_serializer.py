@@ -27,3 +27,12 @@ class UserFollowerAuthFollowers(serializers.ModelSerializer):
     class Meta:
         model = UserFollower
         fields = ["id", "follower", "created_at"]
+        
+class UserFollowerAuthFollowed(serializers.ModelSerializer):
+    
+    # follower = UserGetSerializer()
+    followed = UserGetSerializer()
+    
+    class Meta:
+        model = UserFollower
+        fields = ["id", "followed", "created_at"]
