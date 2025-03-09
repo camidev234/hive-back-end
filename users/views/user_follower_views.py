@@ -13,11 +13,27 @@ class UserFollowerView(APIView):
         api_response = ApiSuccessResponse(201, user_follower_created, "Following successfully")
         return Response(api_response.get_response(), status=status.HTTP_201_CREATED)
     
+    def delete(self, request, pk):
+        result = self.user_follower_service.delete_follow(pk)
+        if result:
+            api_response = ApiSuccessResponse(200, None, "Follow deleted successfully")
+            return Response(api_response.get_response(), status=status.HTTP_200_OK)
+    
 class UserValidateFollowView(APIView):
     def __init__(self, user_follower_service = None):
         self.user_follower_service = user_follower_service or UserFollowerService()
         
     def get(self, request, pk):
         result = self.user_follower_service.validate_following(pk, request.user)
-        api_response = ApiSuccessResponse(200, {"result": result}, "Follow validated successfully")
+        
+        if result is None:
+            response_object = {
+                "result": False
+            }
+        else: 
+            response_object = {
+                "result": True,
+                "following_id": result.id
+            }
+        api_response = ApiSuccessResponse(200, response_object, "Follow validated successfully")
         return Response(api_response.get_response(), status=status.HTTP_200_OK)

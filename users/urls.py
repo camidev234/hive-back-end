@@ -9,5 +9,6 @@ urlpatterns = [
     path("auth/login/", AuthView.as_view(), name="login"),
     path("auth/refresh/", CustomTokenRefreshView.as_view(), name="refresh"),
     path("usersfollowing/", UserFollowerView.as_view(), name="user_followers"),
+    path("usersfollowing/<int:pk>/", UserFollowerView.as_view(), name="user_followers_detail"),
     path("follows/validatefollow/<int:pk>/", UserValidateFollowView.as_view(), name="validate_follow")
 ]

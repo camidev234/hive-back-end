@@ -26,7 +26,18 @@ class UserFollowerService():
         
         user_following = user_auth.following.filter(followed_id=user.id).first()
         
-        if user_following is None:
-            return False
+        return user_following
+    
+    
+    def get_user_follow(self, user_follow_id):
+        try:
+            user_follow = UserFollower.objects.get(id=user_follow_id)
+            return user_follow
+        except UserFollower.DoesNotExist:
+            raise exceptions.NotFound("The following does not exists")
+    
+    def delete_follow(self, user_follow_id):
+        user_follow = self.get_user_follow(user_follow_id)
+        user_follow.delete()
         
         return True
