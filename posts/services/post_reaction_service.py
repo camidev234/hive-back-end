@@ -4,12 +4,14 @@ from rest_framework import exceptions
 from posts.models.post_reaction import PostReaction
 from users.services.user_service import UserService
 from hive.utils.paginator import Paginator
+from users.services.user_follower_service import UserFollowerService
 
 class PostReactionService():
     
-    def __init__(self, post_service=None, user_service = None):
+    def __init__(self, post_service=None, user_service = None, user_follower_service=None):
         self.post_service = post_service or PostService()
         self.user_service = user_service or UserService()
+        self.user_follower_service = user_follower_service or UserFollowerService()
     
     
     def save_reaction(self, data, user_auth):
@@ -54,13 +56,24 @@ class PostReactionService():
         post = self.post_service.get_post(post_id)
         reactions = PostReaction.objects.filter(post_id=post_id).order_by("-created_at")
         
-        paginator = Paginator()
+        paginator = Paginator(20)
         paginated_reactions = paginator.paginate_query_set(reactions, request)
         serialized_reactions = ReactionGetListSerializer(paginated_reactions, many=True)
         
+        reactions_data = serialized_reactions.data
+        
+        for reaction in reactions_data:
+            result = self.user_follower_service.validate_following(reaction["user"]["id"], request.user)
+            if result is None:
+                reaction["is_followed"] = False
+                reaction["following_id"] = None
+            else:
+                reaction["is_followed"] = True
+                reaction["following_id"] = result.id
+        
         paginator_object = paginator.get_paginator_object()
         
-        return paginator_object.get_paginated_response(serialized_reactions.data)
+        return paginator_object.get_paginated_response(reactions_data)
         
         
         

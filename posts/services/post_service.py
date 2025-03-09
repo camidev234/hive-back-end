@@ -24,7 +24,7 @@ class PostService():
     
     def get_posts(self, request):
         posts = Post.objects.all().exclude(user_id=request.user.id).order_by("-created_at")
-        paginator = Paginator()
+        paginator = Paginator(30)
         paginated_posts = paginator.paginate_query_set(posts, request)
         
         serialized_posts = PostGetSerializer(paginated_posts, many=True)
